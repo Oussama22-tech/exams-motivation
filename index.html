@@ -408,142 +408,123 @@
 
     <div class="stage"></div>
   </div>
-
+<audio id="song" preload="auto">
+  <source src="go-booba-go.mp3" type="audio/mpeg">
+</audio>
   <script>
-    const lyricsEl = document.getElementById("lyrics");
-    const singBtn = document.getElementById("singBtn");
-    const danceBtn = document.getElementById("danceBtn");
-    const bearWrap = document.getElementById("bearWrap");
+  const lyricsEl = document.getElementById("lyrics");
+  const singBtn = document.getElementById("singBtn");
+  const danceBtn = document.getElementById("danceBtn");
+  const bearWrap = document.getElementById("bearWrap");
+  const song = document.getElementById("song");
 
-    let noteInterval = null;
-    let sparkleInterval = null;
-    let isSinging = false;
+  let noteInterval = null;
+  let sparkleInterval = null;
+  let isPlaying = false;
+  let lyricTimeouts = [];
 
-    const lyricSteps = [
-      { text: "🎵 Go booba go...", delay: 0 },
-      { text: "🎵 you gotta make it done...", delay: 1800 },
-      { text: "🎵 Go booba go...", delay: 4000 },
-      { text: "🎵 exams are almost done...", delay: 5800 },
-      { text: "✨ You got this Booba! ✨", delay: 8300 }
-    ];
+  const lyricSteps = [
+    { text: "🎵 Go booba go...", delay: 0 },
+    { text: "🎵 you gotta make it done...", delay: 1400 },
+    { text: "🎵 Go booba go...", delay: 3100 },
+    { text: "🎵 exams are almost done...", delay: 4500 },
+    { text: "✨ YOU GOT THIS BOOBA ✨", delay: 6400 }
+  ];
 
-    function createNote() {
-      const note = document.createElement("div");
-      note.className = "note";
-      note.textContent = ["♪", "♫", "♬"][Math.floor(Math.random() * 3)];
-      note.style.left = `${45 + Math.random() * 10}%`;
-      note.style.top = `${42 + Math.random() * 8}%`;
-      note.style.animationDuration = `${2.8 + Math.random() * 1.8}s`;
-      document.querySelector(".scene").appendChild(note);
+  function clearLyricTimers() {
+    lyricTimeouts.forEach(t => clearTimeout(t));
+    lyricTimeouts = [];
+  }
 
-      setTimeout(() => note.remove(), 4500);
+  function createNote() {
+    const note = document.createElement("div");
+    note.className = "note";
+    note.textContent = ["♪", "♫", "♬"][Math.floor(Math.random() * 3)];
+    note.style.left = `${45 + Math.random() * 10}%`;
+    note.style.top = `${42 + Math.random() * 8}%`;
+    note.style.animationDuration = `${2.8 + Math.random() * 1.8}s`;
+    document.querySelector(".scene").appendChild(note);
+    setTimeout(() => note.remove(), 4500);
+  }
+
+  function createSparkle() {
+    const s = document.createElement("div");
+    s.className = "sparkle";
+    s.style.left = `${Math.random() * 100}%`;
+    s.style.top = `${Math.random() * 100}%`;
+    s.style.animationDuration = `${1.5 + Math.random() * 2}s`;
+    document.querySelector(".scene").appendChild(s);
+    setTimeout(() => s.remove(), 2500);
+  }
+
+  function startVisuals() {
+    noteInterval = setInterval(createNote, 450);
+    sparkleInterval = setInterval(createSparkle, 300);
+  }
+
+  function stopVisuals() {
+    clearInterval(noteInterval);
+    clearInterval(sparkleInterval);
+  }
+
+  function setLyricsTimeline() {
+    clearLyricTimers();
+    lyricSteps.forEach(step => {
+      const timer = setTimeout(() => {
+        lyricsEl.textContent = step.text;
+      }, step.delay);
+      lyricTimeouts.push(timer);
+    });
+  }
+
+  function resetShow() {
+    isPlaying = false;
+    singBtn.textContent = "Play Song";
+    lyricsEl.textContent = "Press “Play Song”";
+    stopVisuals();
+    clearLyricTimers();
+    song.pause();
+    song.currentTime = 0;
+  }
+
+  function startShow() {
+    if (isPlaying) {
+      resetShow();
+      return;
     }
 
-    function createSparkle() {
-      const s = document.createElement("div");
-      s.className = "sparkle";
-      s.style.left = `${Math.random() * 100}%`;
-      s.style.top = `${Math.random() * 100}%`;
-      s.style.animationDuration = `${1.5 + Math.random() * 2}s`;
-      document.querySelector(".scene").appendChild(s);
+    isPlaying = true;
+    singBtn.textContent = "Stop Song";
+    setLyricsTimeline();
+    startVisuals();
 
-      setTimeout(() => s.remove(), 2500);
-    }
+    song.currentTime = 0;
+    song.play().catch(() => {
+      lyricsEl.textContent = "Could not play audio. Check that go-booba-go.mp3 exists.";
+      resetShow();
+    });
+  }
 
-    function setLyricsTimeline() {
-      lyricSteps.forEach(step => {
-        setTimeout(() => {
-          lyricsEl.textContent = step.text;
-        }, step.delay);
-      });
-    }
+  function boostDance() {
+    bearWrap.style.animationDuration = "0.6s";
+    bearWrap.style.filter = "drop-shadow(0 0 18px rgba(255,255,255,0.7))";
 
-    function speakSong() {
-      if (!("speechSynthesis" in window)) {
-        lyricsEl.textContent = "Your browser does not support speech synthesis.";
-        return;
-      }
+    setTimeout(() => {
+      bearWrap.style.animationDuration = "1.2s";
+      bearWrap.style.filter = "none";
+    }, 2200);
+  }
 
-      window.speechSynthesis.cancel();
+  song.addEventListener("ended", () => {
+    isPlaying = false;
+    singBtn.textContent = "Play Song";
+    lyricsEl.textContent = "✨ Again? Press Play Song ✨";
+    stopVisuals();
+    clearLyricTimers();
+  });
 
-      const parts = [
-        "Go booba go!",
-        "You gotta make it done!",
-        "Go booba go!",
-        "Exams are almost done!"
-      ];
-
-      let totalDelay = 0;
-
-      parts.forEach((line, index) => {
-        setTimeout(() => {
-          const utterance = new SpeechSynthesisUtterance(line);
-          utterance.pitch = 1.5;
-          utterance.rate = 0.95;
-          utterance.volume = 1;
-
-          const voices = speechSynthesis.getVoices();
-          const preferredVoice =
-            voices.find(v => /female|zira|samantha|google us english/i.test(v.name)) ||
-            voices.find(v => /english/i.test(v.lang)) ||
-            null;
-
-          if (preferredVoice) utterance.voice = preferredVoice;
-
-          speechSynthesis.speak(utterance);
-
-          if (index === parts.length - 1) {
-            utterance.onend = () => {
-              setTimeout(() => {
-                isSinging = false;
-                singBtn.textContent = "Play Song";
-                clearInterval(noteInterval);
-                clearInterval(sparkleInterval);
-              }, 1200);
-            };
-          }
-        }, totalDelay);
-
-        totalDelay += 1900;
-      });
-    }
-
-    function startShow() {
-      if (isSinging) {
-        window.speechSynthesis.cancel();
-        clearInterval(noteInterval);
-        clearInterval(sparkleInterval);
-        isSinging = false;
-        singBtn.textContent = "Play Song";
-        lyricsEl.textContent = "Press “Play Song”";
-        return;
-      }
-
-      isSinging = true;
-      singBtn.textContent = "Stop Song";
-
-      setLyricsTimeline();
-      speakSong();
-
-      noteInterval = setInterval(createNote, 450);
-      sparkleInterval = setInterval(createSparkle, 300);
-    }
-
-    function boostDance() {
-      bearWrap.style.animationDuration = "0.6s";
-      bearWrap.style.filter = "drop-shadow(0 0 18px rgba(255,255,255,0.7))";
-
-      setTimeout(() => {
-        bearWrap.style.animationDuration = "1.2s";
-        bearWrap.style.filter = "none";
-      }, 2200);
-    }
-
-    singBtn.addEventListener("click", startShow);
-    danceBtn.addEventListener("click", boostDance);
-
-    // Helps some browsers load voices
-    window.speechSynthesis.onvoiceschanged = () => {};
-  </script>
+  singBtn.addEventListener("click", startShow);
+  danceBtn.addEventListener("click", boostDance);
+</script>
 </body>
 </html>
