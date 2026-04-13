@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Go Booba Go</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #ffe7f3, #fff7d6);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .title {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: clamp(22px, 4vw, 42px);
+      font-weight: bold;
+      color: #7a3f2a;
+      text-shadow: 0 2px 0 rgba(255,255,255,0.6);
+      z-index: 10;
+    }
+
+    .subtitle {
+      position: absolute;
+      top: 70px;
+      width: 100%;
+      text-align: center;
+      font-size: clamp(14px, 2vw, 22px);
+      color: #8b5b45;
+      z-index: 10;
+    }
+
+    .stage {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 180px;
+      background: radial-gradient(circle at center, #ffd1dc 0%, #ffc3d2 40%, #ffb2c7 100%);
+      border-top: 4px solid rgba(255,255,255,0.5);
+    }
+
+    .bear-wrap {
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      transform: translate(-50%, -50%);
+      width: 280px;
+      height: 360px;
+      animation: fullDance 1.2s ease-in-out infinite;
+      transform-origin: center bottom;
+    }
+
+    @keyframes fullDance {
+      0%   { transform: translate(-50%, -50%) rotate(-2deg) scale(1); }
+      25%  { transform: translate(-48%, -51%) rotate(3deg) scale(1.02); }
+      50%  { transform: translate(-50%, -49%) rotate(-3deg) scale(1); }
+      75%  { transform: translate(-52%, -51%) rotate(3deg) scale(1.02); }
+      100% { transform: translate(-50%, -50%) rotate(-2deg) scale(1); }
+    }
+
+    .bear {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .ear {
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      background: #8a5a44;
+      border-radius: 50%;
+      top: 34px;
+      z-index: 1;
+    }
+
+    .ear::after {
+      content: "";
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      background: #d7a38b;
+      border-radius: 50%;
+      top: 18px;
+      left: 18px;
+    }
+
+    .ear.left { left: 42px; }
+    .ear.right { right: 42px; }
+
+    .head {
+      position: absolute;
+      top: 55px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 190px;
+      height: 170px;
+      background: #8a5a44;
+      border-radius: 46% 46% 42% 42%;
+      z-index: 2;
+    }
+
+    .eye {
+      position: absolute;
+      width: 16px;
+      height: 20px;
+      background: #1f1f1f;
+      border-radius: 50%;
+      top: 60px;
+      animation: blink 4s infinite;
+    }
+
+    .eye.left { left: 52px; }
+    .eye.right { right: 52px; }
+
+    @keyframes blink {
+      0%, 45%, 48%, 100% { transform: scaleY(1); }
+      46%, 47% { transform: scaleY(0.1); }
+    }
+
+    .cheek {
+      position: absolute;
+      width: 28px;
+      height: 18px;
+      background: rgba(255, 170, 180, 0.6);
+      border-radius: 50%;
+      top: 88px;
+    }
+
+    .cheek.left { left: 30px; }
+    .cheek.right { right: 30px; }
+
+    .snout {
+      position: absolute;
+      width: 78px;
+      height: 58px;
+      background: #d7a38b;
+      border-radius: 50%;
+      left: 50%;
+      top: 82px;
+      transform: translateX(-50%);
+    }
+
+    .nose {
+      position: absolute;
+      width: 22px;
+      height: 16px;
+      background: #2d2019;
+      border-radius: 50%;
+      left: 50%;
+      top: 12px;
+      transform: translateX(-50%);
+    }
+
+    .mouth {
+      position: absolute;
+      width: 38px;
+      height: 24px;
+      border-bottom: 4px solid #2d2019;
+      border-radius: 0 0 50px 50px;
+      left: 50%;
+      top: 26px;
+      transform: translateX(-50%);
+      animation: singMouth 0.35s infinite;
+    }
+
+    @keyframes singMouth {
+      0%, 100% { height: 14px; width: 34px; }
+      50% { height: 26px; width: 40px; }
+    }
+
+    .body {
+      position: absolute;
+      width: 180px;
+      height: 170px;
+      background: #8a5a44;
+      border-radius: 45% 45% 40% 40%;
+      left: 50%;
+      top: 185px;
+      transform: translateX(-50%);
+      z-index: 1;
+    }
+
+    .belly {
+      position: absolute;
+      width: 95px;
+      height: 110px;
+      background: #d7a38b;
+      border-radius: 50%;
+      left: 50%;
+      top: 30px;
+      transform: translateX(-50%);
+    }
+
+    .arm {
+      position: absolute;
+      width: 42px;
+      height: 110px;
+      background: #8a5a44;
+      top: 210px;
+      border-radius: 30px;
+      transform-origin: top center;
+      z-index: 0;
+    }
+
+    .arm.left {
+      left: 42px;
+      animation: armLeft 0.7s ease-in-out infinite alternate;
+    }
+
+    .arm.right {
+      right: 42px;
+      animation: armRight 0.7s ease-in-out infinite alternate;
+    }
+
+    @keyframes armLeft {
+      from { transform: rotate(30deg); }
+      to   { transform: rotate(-25deg); }
+    }
+
+    @keyframes armRight {
+      from { transform: rotate(-30deg); }
+      to   { transform: rotate(25deg); }
+    }
+
+    .leg {
+      position: absolute;
+      width: 46px;
+      height: 90px;
+      background: #8a5a44;
+      bottom: 6px;
+      border-radius: 30px;
+      z-index: 0;
+      transform-origin: top center;
+    }
+
+    .leg.left {
+      left: 88px;
+      animation: legLeft 0.6s ease-in-out infinite alternate;
+    }
+
+    .leg.right {
+      right: 88px;
+      animation: legRight 0.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes legLeft {
+      from { transform: rotate(12deg); }
+      to   { transform: rotate(-12deg); }
+    }
+
+    @keyframes legRight {
+      from { transform: rotate(-12deg); }
+      to   { transform: rotate(12deg); }
+    }
+
+    .foot {
+      position: absolute;
+      width: 56px;
+      height: 26px;
+      background: #6e4636;
+      border-radius: 30px;
+      bottom: -5px;
+      left: -5px;
+    }
+
+    .lyrics {
+      position: absolute;
+      bottom: 190px;
+      width: 100%;
+      text-align: center;
+      font-size: clamp(18px, 2.3vw, 30px);
+      color: #6d3c2e;
+      font-weight: bold;
+      padding: 0 20px;
+      z-index: 20;
+      min-height: 40px;
+      text-shadow: 0 2px 10px rgba(255,255,255,0.85);
+    }
+
+    .btns {
+      position: absolute;
+      top: 120px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      z-index: 30;
+      flex-wrap: wrap;
+      padding: 0 10px;
+    }
+
+    button {
+      border: none;
+      padding: 12px 20px;
+      border-radius: 999px;
+      background: #8a5a44;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .note {
+      position: absolute;
+      font-size: 30px;
+      opacity: 0;
+      animation: floatNote 4s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes floatNote {
+      0% {
+        transform: translateY(0) scale(0.8) rotate(0deg);
+        opacity: 0;
+      }
+      15% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-220px) scale(1.2) rotate(12deg);
+        opacity: 0;
+      }
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: rgba(255,255,255,0.8);
+      border-radius: 50%;
+      animation: sparkle 2s infinite ease-in-out;
+    }
+
+    @keyframes sparkle {
+      0%, 100% { transform: scale(0.5); opacity: 0.4; }
+      50% { transform: scale(1.4); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="title">🐻 Go Booba Go 🐻</div>
+    <div class="subtitle">Cute bear support for exam season</div>
+
+    <div class="btns">
+      <button id="singBtn">Play Song</button>
+      <button id="danceBtn">Dance Harder</button>
+    </div>
+
+    <div class="lyrics" id="lyrics">Press “Play Song”</div>
+
+    <div class="bear-wrap" id="bearWrap">
+      <div class="bear">
+        <div class="ear left"></div>
+        <div class="ear right"></div>
+
+        <div class="head">
+          <div class="eye left"></div>
+          <div class="eye right"></div>
+          <div class="cheek left"></div>
+          <div class="cheek right"></div>
+          <div class="snout">
+            <div class="nose"></div>
+            <div class="mouth"></div>
+          </div>
+        </div>
+
+        <div class="arm left"></div>
+        <div class="arm right"></div>
+
+        <div class="body">
+          <div class="belly"></div>
+        </div>
+
+        <div class="leg left"><div class="foot"></div></div>
+        <div class="leg right"><div class="foot"></div></div>
+      </div>
+    </div>
+
+    <div class="stage"></div>
+  </div>
+
+  <script>
+    const lyricsEl = document.getElementById("lyrics");
+    const singBtn = document.getElementById("singBtn");
+    const danceBtn = document.getElementById("danceBtn");
+    const bearWrap = document.getElementById("bearWrap");
+
+    let noteInterval = null;
+    let sparkleInterval = null;
+    let isSinging = false;
+
+    const lyricSteps = [
+      { text: "🎵 Go booba go...", delay: 0 },
+      { text: "🎵 you gotta make it done...", delay: 1800 },
+      { text: "🎵 Go booba go...", delay: 4000 },
+      { text: "🎵 exams are almost done...", delay: 5800 },
+      { text: "✨ You got this Booba! ✨", delay: 8300 }
+    ];
+
+    function createNote() {
+      const note = document.createElement("div");
+      note.className = "note";
+      note.textContent = ["♪", "♫", "♬"][Math.floor(Math.random() * 3)];
+      note.style.left = `${45 + Math.random() * 10}%`;
+      note.style.top = `${42 + Math.random() * 8}%`;
+      note.style.animationDuration = `${2.8 + Math.random() * 1.8}s`;
+      document.querySelector(".scene").appendChild(note);
+
+      setTimeout(() => note.remove(), 4500);
+    }
+
+    function createSparkle() {
+      const s = document.createElement("div");
+      s.className = "sparkle";
+      s.style.left = `${Math.random() * 100}%`;
+      s.style.top = `${Math.random() * 100}%`;
+      s.style.animationDuration = `${1.5 + Math.random() * 2}s`;
+      document.querySelector(".scene").appendChild(s);
+
+      setTimeout(() => s.remove(), 2500);
+    }
+
+    function setLyricsTimeline() {
+      lyricSteps.forEach(step => {
+        setTimeout(() => {
+          lyricsEl.textContent = step.text;
+        }, step.delay);
+      });
+    }
+
+    function speakSong() {
+      if (!("speechSynthesis" in window)) {
+        lyricsEl.textContent = "Your browser does not support speech synthesis.";
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const parts = [
+        "Go booba go!",
+        "You gotta make it done!",
+        "Go booba go!",
+        "Exams are almost done!"
+      ];
+
+      let totalDelay = 0;
+
+      parts.forEach((line, index) => {
+        setTimeout(() => {
+          const utterance = new SpeechSynthesisUtterance(line);
+          utterance.pitch = 1.5;
+          utterance.rate = 0.95;
+          utterance.volume = 1;
+
+          const voices = speechSynthesis.getVoices();
+          const preferredVoice =
+            voices.find(v => /female|zira|samantha|google us english/i.test(v.name)) ||
+            voices.find(v => /english/i.test(v.lang)) ||
+            null;
+
+          if (preferredVoice) utterance.voice = preferredVoice;
+
+          speechSynthesis.speak(utterance);
+
+          if (index === parts.length - 1) {
+            utterance.onend = () => {
+              setTimeout(() => {
+                isSinging = false;
+                singBtn.textContent = "Play Song";
+                clearInterval(noteInterval);
+                clearInterval(sparkleInterval);
+              }, 1200);
+            };
+          }
+        }, totalDelay);
+
+        totalDelay += 1900;
+      });
+    }
+
+    function startShow() {
+      if (isSinging) {
+        window.speechSynthesis.cancel();
+        clearInterval(noteInterval);
+        clearInterval(sparkleInterval);
+        isSinging = false;
+        singBtn.textContent = "Play Song";
+        lyricsEl.textContent = "Press “Play Song”";
+        return;
+      }
+
+      isSinging = true;
+      singBtn.textContent = "Stop Song";
+
+      setLyricsTimeline();
+      speakSong();
+
+      noteInterval = setInterval(createNote, 450);
+      sparkleInterval = setInterval(createSparkle, 300);
+    }
+
+    function boostDance() {
+      bearWrap.style.animationDuration = "0.6s";
+      bearWrap.style.filter = "drop-shadow(0 0 18px rgba(255,255,255,0.7))";
+
+      setTimeout(() => {
+        bearWrap.style.animationDuration = "1.2s";
+        bearWrap.style.filter = "none";
+      }, 2200);
+    }
+
+    singBtn.addEventListener("click", startShow);
+    danceBtn.addEventListener("click", boostDance);
+
+    // Helps some browsers load voices
+    window.speechSynthesis.onvoiceschanged = () => {};
+  </script>
+</body>
+</html>
